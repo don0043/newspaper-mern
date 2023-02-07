@@ -6,3 +6,7 @@ export const registerValidation = [
     body('nickName').isLength({min: 3}),
     body('avatarUrl').optional().isURL()
 ]
+export const loginValidation = [
+    body('email').isEmail(),
+    body('passwordHash').isLength({min: 7}),
+]
