@@ -19,6 +19,6 @@ const UserSchema = new mongoose.Schema({
     imageUrl: {
         type: String
     }
-},{timestamps: true})
+}, {timestamps: true})
 
 export default mongoose.model("User", UserSchema);

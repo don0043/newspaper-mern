@@ -1,4 +1,3 @@
-import {validationResult} from "express-validator";
 import bcrypt from "bcrypt";
 import userModel from "../models/user.js";
 import jwt from "jsonwebtoken";
@@ -6,10 +5,7 @@ import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
     try {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()){
-            return res.status(400).json(errors.array())
-        }
+
         const password = req.body.passwordHash
         const salt = await bcrypt.genSalt(10)
         const hash = await bcrypt.hash(password, salt)
@@ -25,7 +21,7 @@ export const register = async (req, res) => {
         const token = jwt.sign(
             {
                 _id: user._id,
-            },'tetradka2',
+            }, 'tetradka2',
             {
                 expiresIn: '30d'
             }
@@ -36,7 +32,7 @@ export const register = async (req, res) => {
             ...userData,
             token
         })
-    }catch (err){
+    } catch (err) {
         console.log(err)
         res.status(500).json({
             message: "registration failed"
@@ -47,17 +43,17 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const user = await userModel.findOne({email: req.body.email})
-        if (!user){
+        if (!user) {
             return res.status(404).json({message: "incorrect User"})
         }
         const isValidPass = await bcrypt.compare(req.body.passwordHash, user._doc.passwordHash)
-        if (!isValidPass){
+        if (!isValidPass) {
             return res.status(404).json({message: "incorrect User"})
         }
         const token = jwt.sign(
             {
                 _id: user._id,
-            },'tetradka2',
+            }, 'tetradka2',
             {
                 expiresIn: '30d'
             }
@@ -68,17 +64,17 @@ export const login = async (req, res) => {
             ...userData,
             token
         })
-    }catch (err){
+    } catch (err) {
         console.log(err)
         res.status(500).json({message: "authorization failed"})
     }
 }
 
-export const getMe = async (req,res) => {
+export const getMe = async (req, res) => {
     try {
         const user = await userModel.findById(req.userId)
 
-        if (!user){
+        if (!user) {
             return res.status(403).json({
                 message: "user not found"
             })
@@ -87,7 +83,7 @@ export const getMe = async (req,res) => {
         const {passwordHash, ...userData} = user._doc
 
         res.json(userData)
-    }catch (err){
+    } catch (err) {
         res.status(501).json({
             message: "not verified"
         })
